@@ -1,9 +1,10 @@
 package pl.grizwold.wakeup_lamp2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
-import org.rapidoid.lambda.OneParamLambda;
 import org.rapidoid.setup.App;
-import org.rapidoid.setup.On;
+import org.rapidoid.setup.My;
 import pl.grizwold.wakeup_lamp2.logic.LampWorker;
 import pl.grizwold.wakeup_lamp2.logic.RaspberryPi;
 import pl.grizwold.wakeup_lamp2.logic.TimeService;
@@ -53,6 +54,9 @@ public class Application {
         startLampWorker();
 
         App.run(args);
+
+        My.objectMapper()
+                .registerModule(new JavaTimeModule());
 
         new TimeResource(timeService);
         new WakeUpResource(wakeUpService);
