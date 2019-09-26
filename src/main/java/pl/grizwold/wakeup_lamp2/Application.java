@@ -1,6 +1,5 @@
 package pl.grizwold.wakeup_lamp2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import org.rapidoid.setup.App;
