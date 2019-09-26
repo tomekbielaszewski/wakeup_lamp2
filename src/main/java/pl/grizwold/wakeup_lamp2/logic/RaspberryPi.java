@@ -9,28 +9,28 @@ import lombok.extern.slf4j.Slf4j;
 public class RaspberryPi {
     public static final int MAX_PWM_RATE = 1024;
 
-//    private final GpioController gpio;
-//    private final GpioPinPwmOutput pwm;
+    private final GpioController gpio;
+    private final GpioPinPwmOutput pwm;
 
     public RaspberryPi() {
-//        gpio = GpioFactory.getInstance();
-//        Pin pin = CommandArgumentParser.getPin(
-//                RaspiPin.class,
-//                RaspiPin.GPIO_01);
-//        this.pwm = gpio.provisionPwmOutputPin(pin);
-//        Gpio.pwmSetMode(Gpio.PWM_MODE_BAL);
-//        this.pwm.setPwm(0);
-//
-//        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        gpio = GpioFactory.getInstance();
+        Pin pin = CommandArgumentParser.getPin(
+                RaspiPin.class,
+                RaspiPin.GPIO_01);
+        this.pwm = gpio.provisionPwmOutputPin(pin);
+        Gpio.pwmSetMode(Gpio.PWM_MODE_BAL);
+        this.pwm.setPwm(0);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
 
     public RaspberryPi setPWM(Integer pwm) {
-//        this.pwm.setPwm(rate);
+        this.pwm.setPwm(pwm);
         return this;
     }
 
     public void shutdown() {
-//        pwm.setPwm(0);
-//        gpio.shutdown();
+        pwm.setPwm(0);
+        gpio.shutdown();
     }
 }
