@@ -2,6 +2,7 @@ package pl.grizwold.wakeup_lamp2;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.rapidoid.setup.App;
 import org.rapidoid.setup.My;
 import pl.grizwold.wakeup_lamp2.logic.LampWorker;
@@ -20,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class Application {
     public static final WakeUpWeek DEFAULT_WAKEUP = WakeUpWeek.builder()
             .weekend(WakeUpDay.builder()
@@ -41,9 +43,6 @@ public class Application {
     private final LampWorker lampWorker = new LampWorker(wakeUpService, raspberryPi, timeService);
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    public Application() {
-    }
-
     public static void main(String[] args) {
         new Application().run(args);
     }
@@ -63,16 +62,20 @@ public class Application {
     }
 
     private void welcomeBlink() {
-        for (int j = 0; j <= BLINK_REPEATS; j++) {
-            for (int i = 0; i <= RaspberryPi.MAX_PWM_RATE; i++) {
-                raspberryPi.setPWM(i);
-                sleep();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            log.info("Welcome blink started");
+            for (int j = 0; j <= BLINK_REPEATS; j++) {
+                for (int i = 0; i <= RaspberryPi.MAX_PWM_RATE; i++) {
+                    raspberryPi.setPWM(i);
+                    sleep();
+                }
+                for (int i = RaspberryPi.MAX_PWM_RATE; i >= 0; i--) {
+                    raspberryPi.setPWM(i);
+                    sleep();
+                }
             }
-            for (int i = RaspberryPi.MAX_PWM_RATE; i >= 0; i--) {
-                raspberryPi.setPWM(i);
-                sleep();
-            }
-        }
+            log.info("Welcome blink finished");
+        });
     }
 
     @SneakyThrows
@@ -81,6 +84,7 @@ public class Application {
     }
 
     private void startLampWorker() {
-        executor.scheduleAtFixedRate(lampWorker::processLampState, 1, 1, TimeUnit.SECONDS);
+        log.info("Starting lamp worker");
+        executor.scheduleAtFixedRate(lampWorker::processLampState, 5, 1, TimeUnit.SECONDS);
     }
 }
